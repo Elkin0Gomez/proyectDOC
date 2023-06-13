@@ -38,8 +38,9 @@ public class EmpleadoController {
 	private EmpleadoService empleadoService;
 	
 	@GetMapping("/ver/{id}") // se usa para ver cada empleado segun su id
+	//path es para obtener que llegue por la url
 	public String verDetallesDelEmpleado(@PathVariable(value = "id") Long id,Map<String,Object> modelo,RedirectAttributes flash) {
-		Empleado empleado = empleadoService.findOne(id);
+		Empleado empleado = empleadoService.findOne(id); //se crea una variable empleado y se inicializa usando el empleadoservice
 		if(empleado == null) {
 			flash.addFlashAttribute("error", "El empleado no existe en la base de datos");
 			return "redirect:/listar";
@@ -66,7 +67,7 @@ public class EmpleadoController {
 	@GetMapping("/form")
 	public String mostrarFormularioDeRegistrarCliente(Map<String,Object> modelo) {
 		Empleado empleado = new Empleado();
-		modelo.put("empleado", empleado);
+		modelo.put("empleado", empleado);// a modelo lo actualizamos los datos, colocando clave, valor
 		modelo.put("titulo", "Registro de empleados");
 		return "form";
 	}
@@ -80,17 +81,17 @@ public class EmpleadoController {
 		
 		String mensaje = (empleado.getId() != null) ? "El empleado ha sido editato con exito" : "Empleado registrado con exito";
 		
-		empleadoService.save(empleado);
-		status.setComplete();
+		empleadoService.save(empleado); //utlizabdo el empleadoService, guardamos el empleado
+		status.setComplete(); // de la instancia status, se usa el metodo setComplete()
 		flash.addFlashAttribute("success", mensaje);
 		return "redirect:/listar";
 	}
 	
 	@GetMapping("/form/{id}")
 	public String editarEmpleado(@PathVariable(value = "id") Long id,Map<String, Object> modelo,RedirectAttributes flash) {
-		Empleado empleado = null;
-		if(id > 0) {
-			empleado = empleadoService.findOne(id);
+		Empleado empleado = null; // del objeto empleado se inializa en null
+		if(id > 0) { 
+			empleado = empleadoService.findOne(id); // al empleado, usando empleadoService, se encuentra el campo del id que se le pasa por parametros
 			if(empleado == null) {
 				flash.addFlashAttribute("error", "El ID del empleado no existe en la base de datos");
 				return "redirect:/listar";
