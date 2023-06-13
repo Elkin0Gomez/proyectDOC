@@ -72,11 +72,15 @@ public class EmpleadoController {
 		return "form";
 	}
 	
-	@PostMapping("/form")
+	@PostMapping("/form") 
+	//inyectamos la variable REDIRECTATTRIBUTES y SESSIONSTATUS
+	//bindingResult: almacena el resultado de validacion del formulario
+	//session: nos ayuda a señalar que el procesamiento de su sesion esta completo
+
 	public String guardarEmpleado(@Valid Empleado empleado,BindingResult result,Model modelo,RedirectAttributes flash,SessionStatus status) {
 		if(result.hasErrors()) {
-			modelo.addAttribute("titulo", "Registro de cliente");
-			return "form";
+			modelo.addAttribute("titulo", "Registro de cliente"); //agregamos los atributos del redirectAttributes
+			return "form"; // y retornamos la respuesta
 		}
 		
 		String mensaje = (empleado.getId() != null) ? "El empleado ha sido editato con exito" : "Empleado registrado con exito";
@@ -117,21 +121,26 @@ public class EmpleadoController {
 	}
 	
 	@GetMapping("/exportarPDF")
+	// el throws se utiliza para lanzar especificamente una excepción
+	//Java para capturar las excepciones que se hayan podido producir en el bloque de código delimitado por try y catch.
+	// en la siguiente linea declaramos el metodo exportarLis... 
+	// tambien indica que el metodo puede lanzar dos exepciones
 	public void exportarListadoDeEmpleadosEnPDF(HttpServletResponse response) throws DocumentException, IOException {
-		response.setContentType("application/pdf");
+		response.setContentType("application/pdf"); //indica la respuesta HTTP, lo que indica que que se genera un PDF
 		
-		DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
-		String fechaActual = dateFormatter.format(new Date());
+		DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");// se declara un objeto, y el siguiente formato, formatea fechas y horas
+		String fechaActual = dateFormatter.format(new Date()); //crea una instancia date, que representa la fecha actual , y el dateFormatter formatea los datos a textos
 		
-		String cabecera = "Content-Disposition";
+		String cabecera = "Content-Disposition"; // se declara la variable , y se le asigna el valor "content-disposition"
 		String valor = "attachment; filename=Empleados_" + fechaActual + ".pdf";
 		
-		response.setHeader(cabecera, valor);
+		response.setHeader(cabecera, valor); // se establece la respuesta HTTP , la cual indica al navegador que se debe descargar el archivo, junto con el nombre especificado
 		
-		List<Empleado> empleados = empleadoService.findAll();
+		List<Empleado> empleados = empleadoService.findAll(); //  se llama con una lista, todas las variables, no muestra nada el codigo, pero 
+		//se asume que devuelve todos los empleados existentes 
 		
-		EmpleadoExporterPDF exporter = new EmpleadoExporterPDF(empleados);
-		exporter.exportar(response);
+		EmpleadoExporterPDF exporter = new EmpleadoExporterPDF(empleados); // se instancia para exportar los datos de los empleados en un archivo PDF
+		exporter.exportar(response); // indica el inicio del proceso de exportacion del pdf
 	}
 	
 	@GetMapping("/exportarExcel")
